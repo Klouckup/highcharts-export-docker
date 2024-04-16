@@ -1,7 +1,27 @@
-from node:18-alpine
+FROM node:lts-alpine
+
+ENV NODE_ENV=production
+ENV HIGHCHARTS_VERSION=11.4.0
+ENV SERVER_ENABLE=true
+ENV SERVER_SSL_ENABLE=true
+
+# Installs latest Chromium (100) package.
+RUN apk add --no-cache \
+      chromium \
+      nss \
+      freetype \
+      harfbuzz \
+      ca-certificates \
+      ttf-freefont \
+      nodejs \
+      yarn
+
+# Tell Puppeteer to skip installing Chrome. We'll be using the installed package.
+ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
 
 ENV ACCEPT_HIGHCHARTS_LICENSE="YES"
-RUN npm install highcharts-export-server@3.1.1 -g 
+RUN npm install highcharts-export-server -g 
+COPY . .
 
 WORKDIR /usr/share/fonts/truetype
 ADD fonts/OpenSans-Regular.ttf OpenSans-Regular.ttf
